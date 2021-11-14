@@ -37,6 +37,9 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
+      - name: Generation
+        run: npm run gen
+
       - name: Build
         run: npm run build
 
