@@ -33,14 +33,17 @@ jobs:
             ${{ runner.os }}-build-${{ env.cache-name }}-
             ${{ runner.os }}-build-
             ${{ runner.os }}-
-  
+
       - name: Install Dependencies
-        run: npm install
+        run: |
+          sudo apt update
+          sudo apt install -y protobuf-compiler
+          npm install
+          sudo npm i -g protoc-gen-grpc-web
 
       - name: Generation
         run: npm run gen
 
       - name: Build
         run: npm run build
-
 # TODO test
