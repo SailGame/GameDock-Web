@@ -1,0 +1,48 @@
+name: testing
+
+# Trigger on pushes, PRs (excluding documentation changes), and nightly.
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  schedule:
+    - cron: 0 0 * * * # daily at 00:00
+
+jobs:
+  release:
+    name: Test
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: Checkout repository and submodules
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - name: Cache node modules
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-node-modules
+        with:
+          # npm cache files are stored in `~/.npm` on Linux/macOS
+          path: ~/.npm
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+
+      - name: Install Dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y protobuf-compiler
+          npm install
+
+      - name: Generation
+        run: npm run gen
+
+      - name: Build
+        run: npm run build
+# TODO test
