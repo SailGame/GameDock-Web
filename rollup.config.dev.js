@@ -56,7 +56,7 @@ export default {
                 'node_modules/phaser/**',
                 'node_modules/google-protobuf/**',
                 'node_modules/grpc-web/**',
-                'src/proto/**/**'
+                'src/proto/**'
             ],
             exclude: [
                 'node_modules/phaser/src/polyfills/requestAnimationFrame.js'

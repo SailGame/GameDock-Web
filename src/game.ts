@@ -1,8 +1,9 @@
 import 'phaser';
-import { GameCoreClient } from './proto/core/CoreServiceClientPb'
+import GameCore from './proto/core/core_grpc_web_pb.js'
+import CommonTypes from './proto/core/types_pb.js'
 
 export default class Demo extends Phaser.Scene {
-    gcc
+    gcc: GameCore.GameCorePromiseClient
 
     constructor() {
         super('demo');
@@ -15,11 +16,16 @@ export default class Demo extends Phaser.Scene {
     create() {
         this.add.dom(300, 400, 'div', 'background-color: lime; width: 220px; height: 100px; font: 48px Arial', 'Phaser');
         this.add.text(400, 300, "Hello world");
+        this.OnClick()
     }
 
     OnClick() {
         let serverAddr = "localhost:8080"
-        this.gcc = new GameCoreClient(serverAddr);
+        console.log(GameCore)
+        this.gcc = new GameCore.GameCorePromiseClient(serverAddr);
+        let loginArgs = new CommonTypes.LoginArgs()
+        loginArgs.setUsername("")
+        this.gcc.login(loginArgs).then(() => { console.log("Success") }).catch(() => { console.log("Error") })
     }
 }
 

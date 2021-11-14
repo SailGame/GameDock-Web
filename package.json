@@ -7,7 +7,7 @@
         "dev": "rollup --config rollup.config.dev.js",
         "build": "rollup --config rollup.config.dist.js",
         "watch": "rollup --watch --config rollup.config.dev.js",
-        "gen": "mkdir src/proto/ && protoc -I=externals/proto $(find externals/proto -iname *.proto) --js_out=import_style=commonjs:src/proto --grpc-web_out=import_style=typescript,mode=grpcwebtext:src/proto"
+        "gen": "mkdir -p src/proto/ && protoc -I=externals/proto $(find externals/proto -iname *.proto) --js_out=import_style=commonjs:src/proto --grpc-web_out=import_style=commonjs+dts,mode=grpcwebtext:src/proto"
     },
     "repository": {
         "type": "git",
