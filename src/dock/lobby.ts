@@ -58,11 +58,14 @@ export default class LobbyScene extends Phaser.Scene {
         for (let i = 0; i < this.roomsOnePage; i++) {
             let room = createElementFromHTML(RoomHTML)
             room.style.visibility = "false";
-            room.children.item(3).addEventListener("onClick", ()=> {
+            room.children.item(3).addEventListener("onClick", () => {
                 this.joinRoom(i)
             })
             table.appendChild(room)
         }
+        document.getElementById("create-room-button").addEventListener("onClick", ()=> {
+            this.createRoom()
+        })
         this.queryRoom()
     }
 
@@ -100,7 +103,7 @@ export default class LobbyScene extends Phaser.Scene {
                 room.children.item(2).innerHTML = this.rooms[roomIndex].getUsernameList().toString()
                 room.style.visibility = "true"
             }
-            room.style.visibility = "true";
+            room.style.visibility = "false";
         }
     }
 
@@ -110,18 +113,33 @@ export default class LobbyScene extends Phaser.Scene {
         joinRoomArgs.setToken(this.registry.get(RegistryConst.REGISTRY_TOKEN))
         joinRoomArgs.setRoomid(Number(table.children.item(row + 1).children.item(0).innerHTML))
 
-        this.gcc.joinRoom(joinRoomArgs).then((ret)=> {
-            if (ret.getErr() != ErrorPb.ErrorNumber.OK)
-            {
+        this.gcc.joinRoom(joinRoomArgs).then((ret) => {
+            if (ret.getErr() != ErrorPb.ErrorNumber.OK) {
                 alert("Failed to join room, Error:" + ret.getErr().toString())
             }
-            else
-            {
+            else {
                 this.registry.set(RegistryConst.REGISTRY_ROOM, joinRoomArgs.getRoomid())
                 this.scene.start("RoomScene")
             }
-        }).catch(()=>{
+        }).catch(() => {
             alert("Failed to join room, Network Error")
+        })
+    }
+
+    createRoom() {
+        let createRoomArgs = new CommonTypes.CreateRoomArgs
+        createRoomArgs.setToken(this.registry.get(RegistryConst.REGISTRY_TOKEN))
+
+        this.gcc.createRoom(createRoomArgs).then((ret) => {
+            if (ret.getErr() != ErrorPb.ErrorNumber.OK) {
+                alert("Failed to create room, Error:" + ret.getErr().toString())
+            }
+            else {
+                this.registry.set(RegistryConst.REGISTRY_ROOM, ret.getRoomid())
+                this.scene.start("RoomScene")
+            }
+        }).catch(() => {
+            alert("Failed to create room, Network Error")
         })
     }
 }
