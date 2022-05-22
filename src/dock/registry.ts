@@ -1,0 +1,10 @@
+export const REGISTRY_CORE_CLIENT = "core"
+export const REGISTRY_USER_NAME = "username"
+export const REGISTRY_TOKEN = "token"
+export const REGISTRY_GAME = "game"
+export const REGISTRY_CONN = "conn"
+
+export const EVENT_CHAT = "chat"
+export const EVENT_ROOM_DETAILS = "room_details"
+export const EVENT_UNO_CUSTOM = "uno_custom"
+export const EVENT_EXPLODING_CUSTOM = "exploding_kitten_custom"
