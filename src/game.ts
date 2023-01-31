@@ -18,8 +18,4 @@ const config = {
     }
 };
 
-const serverAddr = "http://localhost:8080";
-
 const game = new Phaser.Game(config);
-
-game.registry.set(RegistryConst.REGISTRY_CORE_CLIENT, new GameCore.GameCorePromiseClient(serverAddr));

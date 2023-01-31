@@ -1,10 +1,13 @@
 import 'phaser';
 import GameCore from '../proto/core/core_grpc_web_pb.js'
+import ErrorPb from '../proto/core/error_pb.js';
 import CommonTypes, { LoginArgs, LoginRet } from '../proto/core/types_pb.js'
 import * as RegistryConst from './registry.js'
 
 const LoginHTML = `
 <form id="login-form">
+    <label>Server (default: source:8080)</label><br>
+    <input type="text" id="server" value=""><br>
     <label>User Name:</label><br>
     <input type="text" id="username" value=""><br>
     <label>Password:</label><br>
@@ -21,7 +24,6 @@ export default class LoginScene extends Phaser.Scene {
     }
 
     preload() {
-        this.gcc = this.registry.get(RegistryConst.REGISTRY_CORE_CLIENT)
     }
 
     create() {
@@ -32,8 +34,16 @@ export default class LoginScene extends Phaser.Scene {
 
     Login(e: Event) {
         e.preventDefault()
+        let serverAddr = (document.getElementById('server') as HTMLInputElement).value;
         let username = (document.getElementById('username') as HTMLInputElement).value;
         let password = (document.getElementById('password') as HTMLInputElement).value;
+
+        if (serverAddr === "") {
+            serverAddr = "http://localhost:8080";
+        }
+
+        this.gcc = new GameCore.GameCorePromiseClient(serverAddr)
+        this.registry.set(RegistryConst.REGISTRY_CORE_CLIENT, this.gcc);
 
         let loginArgs = new CommonTypes.LoginArgs();
         loginArgs.setUsername(username);
@@ -42,6 +52,10 @@ export default class LoginScene extends Phaser.Scene {
     }
 
     LoginRetHandler(args: LoginArgs, ret: LoginRet) {
+        if (ret.getErr() != ErrorPb.ErrorNumber.OK) {
+            alert(`Login Error: ${ErrorPb.ErrorNumber[ret.getErr()]}`)
+            return
+        }
         if (this.registry.has(RegistryConst.REGISTRY_TOKEN)) {
             return
         }
